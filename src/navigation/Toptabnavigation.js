@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import SanitaryList from "../components/Sanitary";
+import SanitaryList from "../screen/Sanitary";
 import Setting from "../components/Settings";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Icon } from 'react-native-vector-icons/FontAwesome';

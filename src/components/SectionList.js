@@ -1,9 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, View, SectionList, Image, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import {createTable, insertData} from "../database/dbOperations";
+import db from "../database/database";
 
 const Section = () => {
 
+    useEffect(() => {
+        createTable();
+    }
+    );
     const manu = [
         {
             id: 1,
@@ -67,7 +73,7 @@ const Section = () => {
                             <View style={styles.childView}>
 
                                 <Image style={styles.image} source={{ uri: item.image }} />
-                                
+
                                 <View >
 
                                     <Text style={styles.text1}>{item.name}</Text>
@@ -76,7 +82,7 @@ const Section = () => {
 
                                     <View style={{ flexDirection: 'row' }}>
 
-                                        <TouchableOpacity style={styles.botton} onPress={()=>decrease()}>
+                                        <TouchableOpacity style={styles.botton} onPress={() => decrease()}>
                                             <Text style={{ color: 'black', fontSize: 20 }}>-</Text>
                                         </TouchableOpacity>
 
@@ -88,7 +94,7 @@ const Section = () => {
                                             textAlignVertical: 'center'
                                         }}>{value}</Text>
 
-                                        <TouchableOpacity style={styles.botton} onPress={()=>increase()}>
+                                        <TouchableOpacity style={styles.botton} onPress={() => increase()}>
                                             <Text style={{ color: 'black', fontSize: 20 }}>+</Text>
                                         </TouchableOpacity>
                                     </View>
@@ -148,7 +154,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginLeft: 20,
         marginTop: 20,
-        padding: 10,
+        padding: 8,
         borderRadius: 25,
         backgroundColor: 'rgba(236,240,241,1)'
     }

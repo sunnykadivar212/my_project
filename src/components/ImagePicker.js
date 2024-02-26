@@ -8,8 +8,8 @@ const ImagePickers = () => {
 
     const selectImage = () => {
         ImagePicker.openPicker({
-            width: 300,
-            height: 400,
+            width: 150,
+            height: 200,
             cropping: true
         }).then(image => {
             console.log(image);

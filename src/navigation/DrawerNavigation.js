@@ -28,6 +28,7 @@ import PlayAudio from "../components/Audio";
 import ToastMessages from "../components/Toastmessages";
 import { TouchableOpacity } from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome';
+import AddItems from "../database/addItems";
 
 const Drawer = createDrawerNavigator();
 
@@ -49,6 +50,7 @@ const Drawernavigation = ({ navigation }) => {
                             </TouchableOpacity>
                         </>)
                 }} />
+                <Drawer.Screen name='Add Items' component={AddItems}/>
             <Drawer.Screen name='ImagePicker' component={ImagePickers} />
             <Drawer.Screen name='Flatlist' component={Flatlist} />
             <Drawer.Screen name='Activity indicator' component={Activity_Ind} />
