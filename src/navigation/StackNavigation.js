@@ -9,6 +9,8 @@ import Home from "../screen/HomeScreen";
 import Drawernavigation from "./DrawerNavigation";
 import { Text } from "react-native";
 import Forgotscreen from "../screen/ForgotScreen";
+import AddItems from "../database/addItems";
+import Flatlist from "../components/Flatlist";
 const Stack = createNativeStackNavigator();
 
 const Navigations = () => {
@@ -25,6 +27,8 @@ const Navigations = () => {
                 }} />
                   <Stack.Screen name="DrawerNavigation" component={Drawernavigation} options={{headerShown:false}}/>
                   <Stack.Screen name="ForgotScreen" component={Forgotscreen}/>
+                  <Stack.Screen name="AddItems" component={AddItems}/>
+                  <Stack.Screen name="Flatlist" component={Flatlist}/>
             </Stack.Navigator>
         </NavigationContainer>
     )
