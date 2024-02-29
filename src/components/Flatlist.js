@@ -3,20 +3,33 @@ import React, {
   StyleSheet,
   Text,
   View,
-  ScrollView,
+  Image,
   TouchableOpacity,
+  RefreshControl,
+  ScrollView,
 } from 'react-native';
-import AddItems from '../database/addItems';
 import {useEffect, useState} from 'react';
 import db from '../database/database';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { insertData, updateUser } from '../database/dbOperations';
+import AddItems from '../database/addItems';
 
 const Flatlist = ({navigation}) => {
   const [menuList, setMenuList] = useState([]);
+  const [refresh, setRefresh] = useState();
 
+  const onRefresh = () => {
+    setRefresh(true);
+
+    setTimeout(() => {
+      setRefresh(false);
+      
+    }, 2000);
+  };
+  
   useEffect(() => {
     db.transaction(tx => {
-      tx.executeSql('SELECT*FROM users', [], (tx, results) => {
+      tx.executeSql('SELECT * FROM users', [], (tx, results) => {
         var temp = [];
         for (let i = 0; i < results.rows.length; ++i) {
           temp.push(results.rows.item(i));
@@ -36,24 +49,61 @@ const Flatlist = ({navigation}) => {
 
   let listitem = item => {
     return (
-      <View>
-        <Text style={{color: 'black', fontSize: 18, marginLeft: 10}}>
-          name:{item.name}
-        </Text>
-        <Text style={{color: 'black', fontSize: 18, marginLeft: 10}}>
-          price:{item.price}
-        </Text>
+      <>
+        <View
+          style={{
+            alignItems: 'center',
+            marginHorizontal: 5,
+            flexDirection: 'row',
+            margin: 5,
+            backgroundColor: 'rgba(236,240,245,255)',
+            padding: 16,
+          }}>
+          {item.image && (
+            <Image
+              source={{uri: item.image}}
+              style={{
+                height: 100,
+                width: 100,
+                resizeMode: 'cover',
+                margin: 10,
+                borderRadius: 20,
+              }}
+            />
+          )}
+
+          <View>
+            <Text
+              style={{
+                color: 'black',
+                fontSize: 20,
+                marginLeft: 10,
+                padding: 5,
+              }}>
+              name:{item.name}
+            </Text>
+            <Text
+              style={{
+                color: 'black',
+                fontSize: 20,
+                marginLeft: 10,
+                padding: 5,
+              }}>
+              price:{item.price}
+            </Text>
+          </View>
+        </View>
         <View style={styles.button}>
           <TouchableOpacity
-            style={styles.icon}
             onPress={() =>
               navigation.navigate('AddItems', {
                 itemid: item.id,
-                itemname: item.name,
+                itemname: item.name.toString(),
                 itemprice: item.price.toString(),
                 mode: 'update',
               })
-            }>
+            }
+            style={styles.icon}>
             <Icon name="edit" size={25} color="black" />
           </TouchableOpacity>
           <TouchableOpacity
@@ -62,7 +112,7 @@ const Flatlist = ({navigation}) => {
             <Icon name="delete" size={25} color="black" />
           </TouchableOpacity>
         </View>
-      </View>
+      </>
     );
   };
 
@@ -72,6 +122,9 @@ const Flatlist = ({navigation}) => {
         data={menuList}
         renderItem={({item}) => listitem(item)}
         keyExtractor={(item, index) => index.toString()}
+        refreshControl={
+          <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
+        }
       />
     </View>
   );
@@ -80,9 +133,10 @@ const Flatlist = ({navigation}) => {
 const styles = StyleSheet.create({
   button: {
     flexDirection: 'row',
+    paddingHorizontal: 16,
   },
   icon: {
-    width: 185,
+    flexGrow: 1,
     borderRadius: 10,
     borderWidth: 1,
     alignItems: 'center',

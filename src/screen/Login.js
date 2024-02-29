@@ -87,56 +87,7 @@ const Login = ({navigation}) => {
   };
 
   return (
-    // <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'black' }}>
-    //     <Text style={styles.text}>LogIn</Text>
-    //     <View style={styles.view}>
-    //         <Text style={styles.emailtext}>Email</Text>
-    //         <TextInput
-    //             placeholder="Enter Email"
-    //             style={styles.textinput}
-    //             value={email}
-    //             onChangeText={text => setEmail(text)}>
-    //         </TextInput>
-
-    //     </View>
-
-    //     <View style={styles.view}>
-    //         <Text style={styles.emailtext}>Password</Text>
-    //         <TextInput
-    //             placeholder="Enter Password"
-    //             style={styles.textinput}
-    //             value={password}
-    //             onChangeText={text => setPassword(text)}
-    //             secureTextEntry={true}>
-    //         </TextInput>
-    //     </View>
-
-    //     <TouchableOpacity onPress={Forgotpassword}>
-    //         <Text style={{
-    //             fontSize: 18,
-    //             textAlign: 'center',
-    //             marginTop: 8,
-    //             marginBottom: 8,
-    //             color: 'orange'
-    //         }}>Forget Password ?</Text>
-    //     </TouchableOpacity>
-
-    //     <TouchableHighlight
-    //         style={styles.buttonContent}
-    //         onPress={handleLogin}
-    //         underlayColor={'red'}
-    //     >
-    //         <Text style={styles.buttonText}>LogIn</Text>
-    //     </TouchableHighlight>
-    //     <View style={{ flexDirection: 'row', marginTop: 10, alignItems: 'center', justifyContent: 'center' }}>
-    //         <Text style={{ textAlign: 'center' }}>Don't Have an Account?</Text>
-    //         <TouchableOpacity
-    //             onPress={() => navigation.navigate("signUpPage")}
-    //         >
-    //             <Text style={{ color: 'orange', fontSize: 16, padding: 3 }}>SignUp</Text>
-    //         </TouchableOpacity>
-    //     </View>
-    // </View >
+    
     <KeyboardAwareScrollView style={{flexGrow: 1, backgroundColor: 'skyblue'}}>
       <View style={styles.main}>
         <View style={styles.container}>
@@ -228,45 +179,7 @@ const Login = ({navigation}) => {
   );
 };
 
-// const styles = StyleSheet.create({
-//     text: {
-//         fontSize: 30,
-//         textAlign: 'center',
-//         fontWeight: '200'
 
-//     },
-//     view: {
-//         padding: 13
-//     },
-//     textinput: {
-//         borderColor: 'white',
-//         borderWidth: 2,
-//         borderRadius: 20
-//     },
-//     emailtext: {
-//         fontSize: 20,
-//         marginBottom: 10
-//     },
-//     viewbutton: {
-//         margin: 20
-//     },
-//     buttonContent: {
-//         backgroundColor: "#FFF",
-//         borderRadius: 100,
-//         borderWidth: 1,
-//         marginHorizontal: 20,
-//         marginTop: 10
-//     },
-//     buttonText: {
-//         fontSize: 20,
-//         color: '#000',
-//         width: '100%',
-//         height: 40,
-//         textAlign: 'center',
-//         textAlignVertical: 'center'
-//     }
-
-// })
 
 const styles = StyleSheet.create({
   main: {

@@ -80,54 +80,7 @@ const SignUp = ({navigation}) => {
   };
 
   return (
-    // <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'black' }}>
-    //     <Text style={Styles.text}>SignUp</Text>
-    //     <View style={Styles.view}>
-    //         <Text style={Styles.emailtext}>Email</Text>
-    //         <TextInput
-    //             placeholder="Enter Email"
-    //             style={Styles.textinput}
-    //             value={email}
-    //             onChangeText={text => setEmail(text)}>
-    //         </TextInput>
-    //     </View>
-
-    //     <View style={Styles.view}>
-    //         <Text style={Styles.emailtext}>Password</Text>
-    //         <TextInput
-    //             placeholder="Enter Password"
-    //             value={password}
-    //             onChangeText={text => setPassword(text)}
-    //             style={Styles.textinput}
-    //             secureTextEntry={true}>
-    //         </TextInput>
-    //     </View>
-
-    //     <View style={Styles.view}>
-    //         <Text style={Styles.emailtext}>Confirm Password</Text>
-    //         <TextInput
-    //             placeholder="Enter Confirm Password"
-    //             style={Styles.textinput}
-    //             value={confirmPassword}
-    //             onChangeText={text => setConfirmPassword(text)}
-    //             secureTextEntry={true}
-    //         >
-    //         </TextInput>
-    //     </View>
-    //     <View style={Styles.viewbutton}>
-    //         <TouchableOpacity onPress={handleSignUp}>
-    //             <Text style={Styles.button}>Sign_Up</Text>
-    //         </TouchableOpacity>
-    //     </View>
-    //     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-    //         <Text style={{ textAlign: 'center' }}>Already Have an Account?
-    //         </Text>
-    //         <TouchableOpacity onPress={()=>navigation.navigate("logInPage")}>
-    //             <Text style={{ color: 'orange', fontSize: 16, padding: 5 }}>Login</Text>
-    //         </TouchableOpacity>
-    //     </View>
-
-    // </View>
+    
     <KeyboardAwareScrollView style={{flexGrow: 1, backgroundColor: 'skyblue'}}>
       <View style={styles.main}>
         <View style={styles.container}>
@@ -197,39 +150,6 @@ const SignUp = ({navigation}) => {
   );
 };
 
-// const Styles = StyleSheet.create({
-//     text: {
-//         fontSize: 30,
-//         textAlign: 'center',
-//         fontWeight: '200'
-
-//     },
-//     view: {
-//         padding: 13
-//     },
-//     textinput: {
-//         borderColor: 'white',
-//         borderWidth: 2,
-//         borderRadius: 20
-//     },
-//     emailtext: {
-//         fontSize: 20,
-//         marginBottom: 10
-//     },
-//     viewbutton: {
-//         margin: 20
-//     },
-//     button: {
-//         fontSize: 20,
-//         width: '100%',
-//         height: 40,
-//         backgroundColor: "orange",
-//         borderRadius: 100,
-//         textAlign: 'center',
-//         textAlignVertical: 'center'
-//     }
-
-// })
 
 const styles = StyleSheet.create({
   main: {

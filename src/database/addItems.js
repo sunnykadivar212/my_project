@@ -12,26 +12,33 @@ import {insertData, updateUser} from './dbOperations';
 const AddItems = ({navigation, route}) => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
+  const [imageURL, setImageURL] = useState('');
 
-  const {itemid, mode} = route.params || {itemid: null, mode: 'add'};
+  const {itemid, mode, itemname, itemprice} = route.params || {
+    itemid: null,
+    mode: 'add',
+  };
   const isEditMode = mode === 'update';
 
   useEffect(() => {
-    if (isEditMode) {
-      const {itemname, itemprice} = route.params;
+    if (isEditMode || itemid === itemid) {
       setName(itemname);
       setPrice(itemprice);
     }
   }, []);
 
-  const handlerSubmit = () => {
+  const handleSubmit = () => {
     if (isEditMode) {
       console.log('edit');
       updateUser(name, price, itemid);
     } else {
-      insertData(name, price);
+      insertData(name, price, imageURL);
     }
     navigation.navigate('Flatlist');
+  };
+
+  const handleImageSelect = imageUri => {
+    setImageURL(imageUri);
   };
 
   return (
@@ -55,15 +62,11 @@ const AddItems = ({navigation, route}) => {
           onChangeText={text => setPrice(text)}></TextInput>
       </View>
 
-      <View>
-        <ImagePickers />
-      </View>
+      <ImagePickers onImageSelect={handleImageSelect} />
 
-      <View>
-        <TouchableOpacity style={styles.buttonContent} onPress={handlerSubmit}>
-          <Text style={styles.buttonText}>Submit</Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity onPress={handleSubmit} style={styles.buttonContent}>
+        <Text style={styles.buttonText}>Submit</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -91,11 +94,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     backgroundColor: 'blue',
     borderRadius: 20,
-    margin: 15,
+    // margin: 15,
     marginTop: 60,
-    marginLeft: 40,
-    marginRight: 40,
-    height: 40,
+    // marginLeft: 40,
+    // marginRight: 40,
+    // height: 40,
     textAlign: 'center',
     textAlignVertical: 'center',
   },
