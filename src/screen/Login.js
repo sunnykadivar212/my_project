@@ -12,46 +12,74 @@ import {
 } from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import db from '../database/database';
+// import {authenticateUser} from '../database/dbOperations';
 
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
     try {
-      const userData = await AsyncStorage.getItem('userallData');
-      if (userData) {
-        const storeData = JSON.parse(userData);
-        if (storeData.Email === email && storeData.Password === password) {
-          await AsyncStorage.setItem('userToken', '123');
+      // const db = await initDB();
 
-          navigation.navigate('DrawerNavigation');
-        } else if (email == '') {
-          ToastAndroid.show(
-            'Please enter email',
-            ToastAndroid.LONG,
-            ToastAndroid.CENTER,
-          );
-        } else if (password == '') {
-          ToastAndroid.show(
-            'Please enter Password',
-            ToastAndroid.LONG,
-            ToastAndroid.CENTER,
-          );
-        } else {
-          ToastAndroid.show(
-            'Invalid Email and Password',
-            ToastAndroid.LONG,
-            ToastAndroid.CENTER,
-          );
-        }
-      } else {
-        ToastAndroid.show(
-          'User not Found',
-          ToastAndroid.LONG,
-          ToastAndroid.CENTER,
+      db.transaction(tx => {
+        tx.executeSql(
+          'SELECT id,email,password FROM users WHERE email = ?',
+          [email],
+          (tx, results) => {
+            if (results.rows.length > 0) {
+              const user = results.rows.item(0);
+              console.log(user);
+              const userid = user.id;
+              console.log('login page ==>', userid);
+              if (user.password === password) {
+                // Passwords match, authentication successful
+                // AsyncStorage.setItem('userToken', '123');
+                console.log('userid:', userid);
+                navigation.navigate('DrawerNavigation');
+                AsyncStorage.setItem('id', userid.toString());
+              } else if (email === '') {
+                // Password doesn't match
+                ToastAndroid.show(
+                  'Invalid Email',
+                  ToastAndroid.LONG,
+                  ToastAndroid.CENTER,
+                );
+              } else if (password === '') {
+                // Password doesn't match
+                ToastAndroid.show(
+                  'Invalid Password',
+                  ToastAndroid.LONG,
+                  ToastAndroid.CENTER,
+                );
+              } else {
+                ToastAndroid.show(
+                  'Invalid Email and Password',
+                  ToastAndroid.LONG,
+                  ToastAndroid.CENTER,
+                );
+              }
+            } else {
+              // User not found
+              ToastAndroid.show(
+                'User not found',
+                ToastAndroid.LONG,
+                ToastAndroid.CENTER,
+              );
+            }
+          },
+          error => {
+            console.log(error);
+            ToastAndroid.show(
+              'Error during authentication',
+              ToastAndroid.LONG,
+              ToastAndroid.CENTER,
+            );
+          },
         );
-      }
+      });
     } catch (error) {
       console.log(error);
     }
@@ -71,8 +99,6 @@ const Login = ({navigation}) => {
     navigation.navigate('signUpPage');
   };
 
-  const [showPassword, setShowPassword] = useState(false);
-
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -87,7 +113,6 @@ const Login = ({navigation}) => {
   };
 
   return (
-    
     <KeyboardAwareScrollView style={{flexGrow: 1, backgroundColor: 'skyblue'}}>
       <View style={styles.main}>
         <View style={styles.container}>
@@ -146,7 +171,7 @@ const Login = ({navigation}) => {
             </TouchableHighlight>
 
             <TouchableOpacity
-              onPress={Forgotpassword}
+              onPress={finalForgotpassword}
               style={{alignItems: 'center'}}>
               <Text
                 style={{
@@ -178,8 +203,6 @@ const Login = ({navigation}) => {
     </KeyboardAwareScrollView>
   );
 };
-
-
 
 const styles = StyleSheet.create({
   main: {

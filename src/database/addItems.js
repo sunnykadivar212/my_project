@@ -14,7 +14,8 @@ const AddItems = ({navigation, route}) => {
   const [price, setPrice] = useState('');
   const [imageURL, setImageURL] = useState('');
 
-  const {itemid, mode, itemname, itemprice} = route.params || {
+
+  const {itemid, mode, itemname, itemprice, itemimage} = route.params || {
     itemid: null,
     mode: 'add',
   };
@@ -24,13 +25,14 @@ const AddItems = ({navigation, route}) => {
     if (isEditMode || itemid === itemid) {
       setName(itemname);
       setPrice(itemprice);
+      setImageURL(itemimage);
     }
-  }, []);
+  }, [isEditMode]);
 
   const handleSubmit = () => {
     if (isEditMode) {
       console.log('edit');
-      updateUser(name, price, itemid);
+      updateUser(name, price, imageURL, itemid);
     } else {
       insertData(name, price, imageURL);
     }
@@ -62,7 +64,12 @@ const AddItems = ({navigation, route}) => {
           onChangeText={text => setPrice(text)}></TextInput>
       </View>
 
-      <ImagePickers onImageSelect={handleImageSelect} />
+      <ImagePickers
+        onImageSelect={handleImageSelect}
+        itemimage={itemimage}
+        itemid={itemid}
+        setImageURL={setImageURL}
+      />
 
       <TouchableOpacity onPress={handleSubmit} style={styles.buttonContent}>
         <Text style={styles.buttonText}>Submit</Text>
@@ -93,14 +100,10 @@ const styles = StyleSheet.create({
   buttonContent: {
     fontSize: 20,
     backgroundColor: 'blue',
-    borderRadius: 20,
-    // margin: 15,
+    borderRadius: 15,
     marginTop: 60,
-    // marginLeft: 40,
-    // marginRight: 40,
-    // height: 40,
-    textAlign: 'center',
-    textAlignVertical: 'center',
+    marginLeft: 40,
+    marginRight: 40,
   },
   buttonText: {
     fontSize: 20,

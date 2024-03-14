@@ -1,35 +1,41 @@
-import React, {
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
   FlatList,
   StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
   RefreshControl,
+  Image,
 } from 'react-native';
-import {useEffect, useState} from 'react';
 import db from '../database/database';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Flatlist = ({navigation}) => {
+const MyProducts = ({navigation, route}) => {
   const [menuList, setMenuList] = useState([]);
   const [refresh, setRefresh] = useState();
+  //   const {userid} = route.params;
+  const [storeUserid, setStoreUserid] = useState('');
 
-  // const refreshData = () => {
-  //   try {
-  //     db.transaction(tx => {
-  //       tx.executeSql('SELECT * FROM users', [], (tx, results) => {
-  //         var temp = [];
-  //         for (let i = 0; i < results.rows.length; ++i) {
-  //           temp.push(results.rows.item(i));
-  //         }
-  //         setMenuList(temp);
-  //       });
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  const refreshData = () => {
+    try {
+      getUseridFromDB();
+      db.transaction(tx => {
+        tx.executeSql(
+          'SELECT * FROM products WHERE userid=?',
+          [storeUserid],
+          (tx, results) => {
+            var temp = [];
+            for (let i = 0; i < results.rows.length; ++i) {
+              temp.push(results.rows.item(i));
+            }
+            setMenuList(temp);
+          },
+        );
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const onRefresh = () => {
     setRefresh(true);
@@ -39,16 +45,19 @@ const Flatlist = ({navigation}) => {
     }, 2000);
   };
 
-  useEffect(() => {
-    refreshData();
-  }, [menuList]);
+  // useEffect(() => {
+  //   refreshData();
+  // }, [storeUserid, menuList]);
 
-  const deleteUser = id => {
-    db.transaction(tx => {
-      tx.executeSql('DELETE FROM users WHERE id=?', [id], (tx, results) => {
-        setMenuList(prevList => prevList.filter(user => user.id != id));
-      });
-    });
+  const getUseridFromDB = async () => {
+    try {
+      const id = await AsyncStorage.getItem('userid');
+      if (id !== null) {
+        setStoreUserid(id);
+      }
+    } catch (error) {
+      console.log('Error from asyncStorage:', error);
+    }
   };
 
   let listitem = item => {
@@ -84,7 +93,7 @@ const Flatlist = ({navigation}) => {
                 marginLeft: 10,
                 padding: 5,
               }}>
-              name : {item.name}
+              Name : {item.name}
             </Text>
             <Text
               style={{
@@ -93,11 +102,11 @@ const Flatlist = ({navigation}) => {
                 marginLeft: 10,
                 padding: 5,
               }}>
-              price : {item.price}
+              Price : {item.price}
             </Text>
           </View>
         </View>
-        <View style={styles.button}>
+        {/* <View style={styles.button}>
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('AddItemsFromDatabase', {
@@ -116,11 +125,10 @@ const Flatlist = ({navigation}) => {
             onPress={() => deleteUser(item.id)}>
             <Icon name="delete" size={25} color="red" />
           </TouchableOpacity>
-        </View>
+        </View> */}
       </>
     );
   };
-
   return (
     <View>
       <FlatList
@@ -151,4 +159,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Flatlist;
+export default MyProducts;

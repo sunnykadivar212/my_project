@@ -13,39 +13,37 @@ import Toast from 'react-native-toast-message';
 import Home from './HomeScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import db from '../database/database';
+import {insertUser} from '../database/dbOperations';
 
 const SignUp = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const userData = {
-    Email: email,
-    Password: password,
-  };
+  // const userData = {
+  //   Email: email,
+  //   Password: password,
+  // };
 
-  const storeData = async () => {
-    try {
-      await AsyncStorage.setItem('userallData', JSON.stringify(userData));
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const storeData = async () => {
+  //   try {
+  //     await AsyncStorage.setItem('userallData', JSON.stringify(userData));
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-  const showData = async () => {
-    try {
-      const jsonValue = await AsyncStorage.getItem('userallData');
-      allData = jsonValue != null ? JSON.parse(jsonValue) : null;
-      console.log(allData);
-      return allData;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const navigationtoLogin = () => {
-    navigation.navigate('DrawerNavigation');
-  };
+  // const showData = async () => {
+  //   try {
+  //     const jsonValue = await AsyncStorage.getItem('userallData');
+  //     allData = jsonValue != null ? JSON.parse(jsonValue) : null;
+  //     console.log(allData);
+  //     return allData;
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const handleSignUp = () => {
     if (
@@ -54,9 +52,30 @@ const SignUp = ({navigation}) => {
       confirmPassword != '' &&
       email != ''
     ) {
-      storeData();
-      showData();
-      navigationtoLogin();
+      // storeData();
+      // showData();
+      // navigationtoLogin();
+      db.transaction(tx => {
+        tx.executeSql(
+          'INSERT INTO users (email, password) VALUES(?, ?)',
+          [email, password],
+          (tx, results) => {
+            if (results.rowsAffected > 0) {
+              navigation.navigate('logInPage');
+              ToastAndroid.show(
+                'User Insert successfully',
+                ToastAndroid.SHORT(),
+              );
+              console.log('navigation correct');
+            } else {
+              ToastAndroid.show('Failed To Register User', ToastAndroid.LONG());
+            }
+          },
+          error => {
+            console.log(error);
+          },
+        );
+      });
     } else if (password != confirmPassword) {
       ToastAndroid.show(
         'Enter valid confirm password',
@@ -80,7 +99,6 @@ const SignUp = ({navigation}) => {
   };
 
   return (
-    
     <KeyboardAwareScrollView style={{flexGrow: 1, backgroundColor: 'skyblue'}}>
       <View style={styles.main}>
         <View style={styles.container}>
@@ -149,7 +167,6 @@ const SignUp = ({navigation}) => {
     </KeyboardAwareScrollView>
   );
 };
-
 
 const styles = StyleSheet.create({
   main: {
