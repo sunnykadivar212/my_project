@@ -11,6 +11,8 @@ import { Text } from "react-native";
 import Forgotscreen from "../screen/ForgotScreen";
 import AddItems from "../database/addItems";
 import AllProducts from "../screen/Allproducts";
+import AddToCart from "../screen/Addtocart";
+import MyProducts from "../screen/Myproducts";
 const Stack = createNativeStackNavigator();
 
 const Navigations = () => {
@@ -28,8 +30,9 @@ const Navigations = () => {
                   <Stack.Screen name="DrawerNavigation" component={Drawernavigation} options={{headerShown:false}}/>
                   <Stack.Screen name="ForgotScreen" component={Forgotscreen}/>
                   <Stack.Screen name="AddItems" component={AddItems}/>
-                  <Stack.Screen name="All Products" component={AllProducts}/>
-        
+                  <Stack.Screen name="AllProducts" component={AllProducts}/>
+                  <Stack.Screen name="AddtoCart" component={AddToCart}/>
+                <Stack.Screen name='MyProducts' component={MyProducts}/>
             </Stack.Navigator>
         </NavigationContainer>
     )

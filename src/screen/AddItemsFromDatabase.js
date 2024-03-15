@@ -22,7 +22,7 @@ const AddItemsFromDatabase = ({navigation, route}) => {
   useEffect(() => {
     const getUserId = async () => {
       try {
-        const id =await AsyncStorage.getItem('id');
+        const id = await AsyncStorage.getItem('id');
         console.log('id ====>', id);
         if (id !== null) {
           setStoreUserid(id);
@@ -58,10 +58,11 @@ const AddItemsFromDatabase = ({navigation, route}) => {
     console.log('img ==> ', imageURL);
 
     insertProduct(storeUserid, name, price, imageURL);
+    navigation.navigate('MyProducts');
     setName('');
     setPrice('');
     setImageURL('');
-    navigation.navigate('All Products');
+
     // if (isEditMode) {
     //   console.log('edit');
     //   updateUser(name, price, imageURL, itemid);

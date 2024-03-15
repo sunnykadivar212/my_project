@@ -6,11 +6,13 @@ import {
   StyleSheet,
   RefreshControl,
   Image,
+  TouchableOpacity,
 } from 'react-native';
 import db from '../database/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const MyProducts = ({navigation, route}) => {
+const AddToCart = () => {
   const [menuList, setMenuList] = useState([]);
   const [refresh, setRefresh] = useState();
   //   const {userid} = route.params;
@@ -21,7 +23,7 @@ const MyProducts = ({navigation, route}) => {
       getUseridFromDB();
       db.transaction(tx => {
         tx.executeSql(
-          'SELECT * FROM products WHERE userid=?',
+          'SELECT * FROM addtocart WHERE userid=?',
           [storeUserid],
           (tx, results) => {
             var temp = [];
@@ -47,7 +49,7 @@ const MyProducts = ({navigation, route}) => {
 
   useEffect(() => {
     refreshData();
-  }, [storeUserid, menuList,refresh]);
+  }, [storeUserid, menuList, refresh]);
 
   const getUseridFromDB = async () => {
     try {
@@ -60,6 +62,23 @@ const MyProducts = ({navigation, route}) => {
     }
   };
 
+  const deleteUser = id => {
+    db.transaction(tx => {
+      console.log('delete Addtocart===>', id);
+      tx.executeSql('DELETE FROM addtocart WHERE id=?', [id], (tx, results) => {
+        setMenuList(prevList => prevList.filter(user => user.id != id));
+      });
+    });
+  };
+
+  const total=()=>{
+    let total=0;
+    menuList.forEach(item=>{
+      total += item.price*item.quantity;
+    });
+    console.log("Total==>",total);
+  }
+
   let listitem = item => {
     return (
       <>
@@ -69,11 +88,13 @@ const MyProducts = ({navigation, route}) => {
             marginHorizontal: 5,
             flexDirection: 'row',
             margin: 5,
-            backgroundColor: 'rgba(236,240,245,255)',
+            backgroundColor: 'rgba(230,240,245,255)',
             padding: 16,
             borderWidth:1,
             borderColor:'black',
-            borderRadius:10, 
+            borderRadius:10,
+            marginLeft:10,
+            marginRight:10
           }}>
           {item.image && (
             <Image
@@ -107,28 +128,22 @@ const MyProducts = ({navigation, route}) => {
               }}>
               Price : {item.price}
             </Text>
+            <Text
+              style={{
+                color: 'black',
+                fontSize: 20,
+                marginLeft: 10,
+                padding: 5,
+              }}>
+              Quantity : {item.quantity}
+            </Text>
+          </View>
+          <View style={{padding: 20}}>
+            <TouchableOpacity onPress={() => deleteUser(item.id)}>
+              <Icon name="delete-outline" size={30} color="black" />
+            </TouchableOpacity>
           </View>
         </View>
-        {/* <View style={styles.button}>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('AddItemsFromDatabase', {
-                itemid: item.id,
-                itemname: item.name.toString(),
-                itemprice: item.price.toString(),
-                itemimage: item.image,
-                mode: 'update',
-              })
-            }
-            style={styles.icon}>
-            <Icon name="edit" size={25} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.icon}
-            onPress={() => deleteUser(item.id)}>
-            <Icon name="delete" size={25} color="red" />
-          </TouchableOpacity>
-        </View> */}
       </>
     );
   };
@@ -142,24 +157,39 @@ const MyProducts = ({navigation, route}) => {
           <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
         }
       />
+      <View>
+        <TouchableOpacity
+        onPress={total}
+          style={{
+            backgroundColor: 'rgba(168,193,210,1)',
+            alignItems: 'center',
+            margin:10,
+            padding:10,
+            borderRadius:20
+          }}>
+          <Text style={{color: 'black', fontSize: 20, fontWeight: '700'}}>
+            CheckOut
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  button: {
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-  },
-  icon: {
-    flexGrow: 1,
-    borderRadius: 10,
-    borderWidth: 1,
-    alignItems: 'center',
-    padding: 10,
-    backgroundColor: 'skyblue',
-    marginRight: 10,
-  },
-});
+// const styles = StyleSheet.create({
+//   button: {
+//     flexDirection: 'row',
+//     paddingHorizontal: 16,
+//   },
+//   icon: {
+//     flexGrow: 1,
+//     borderRadius: 10,
+//     borderWidth: 1,
+//     alignItems: 'center',
+//     padding: 10,
+//     backgroundColor: 'skyblue',
+//     marginRight: 10,
+//   },
+// });
 
-export default MyProducts;
+export default AddToCart;

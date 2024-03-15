@@ -23,17 +23,42 @@ export const createTable = () => {
           console.log(error);
         },
       );
+
+    tx.executeSql(
+      'CREATE TABLE IF NOT EXISTS addtocart (id INTEGER PRIMARY KEY AUTOINCREMENT, userid INTEGER  , name TEXT NOT NULL , price INTEGER NOT NULL, image TEXT NOT NULL ,quantity INTEGER NOL NULL,FOREIGN KEY(userid) REFERENCES users(id))',
+      [],
+      (tx, results) => {
+        console.log('addtocart Table created successfully');
+      },
+      error => {
+        console.log(error);
+      },
+    );
   });
 };
 
 export const insertProduct = (userid, name, price, image) => {
-  console.log('userid ===>', userid, name, price, image);
   db.transaction(tx => {
     tx.executeSql(
       'INSERT INTO products (userid, name, price, image) VALUES(?, ?, ?, ?)',
       [userid, name, price, image],
       (tx, results) => {
         console.log('Product Inserted successfully');
+      },
+      error => {
+        console.log(error);
+      },
+    );
+  });
+};
+
+export const insertintoaddtocart = (userid, name, price, image, quantity) => {
+  db.transaction(tx => {
+    tx.executeSql(
+      'INSERT INTO addtocart(userid,name, price, image,quantity) VALUES(?,?,?,?,?)',
+      [userid, name, price, image, quantity],
+      (tx, results) => {
+        console.log('Addtocart Inserted successfully');
       },
       error => {
         console.log(error);

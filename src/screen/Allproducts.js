@@ -9,19 +9,29 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import {createTable, insertData} from '../database/dbOperations';
+import {
+  createTable,
+  insertData,
+  insertintoaddtocart,
+} from '../database/dbOperations';
 import db from '../database/database';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useAnimatedRef} from 'react-native-reanimated';
+import {useFocusEffect} from '@react-navigation/native';
 
 const AllProducts = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [refresh, setRefresh] = useState();
+  const [storeUserid, setStoreUserid] = useState('');
 
   useEffect(() => {
-    createTable();
     refreshData();
-  },[]);
+    console.log('allproducts ==> ', storeUserid);
+  }, [refresh]);
 
   const refreshData = () => {
+    getUseridFromDB();
     try {
       db.transaction(tx => {
         tx.executeSql('SELECT * FROM products', [], (tx, results) => {
@@ -42,8 +52,25 @@ const AllProducts = () => {
     refreshData();
     setTimeout(() => {
       setRefresh(false);
-    }, 2000);
+    }, 1000);
   };
+
+  const getUseridFromDB = async () => {
+    try {
+      const id = await AsyncStorage.getItem('id');
+      if (id !== null) {
+        setStoreUserid(id);
+      }
+    } catch (error) {
+      console.log('Error from asyncStorage:', error);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getUseridFromDB();
+    }, []),
+  );
 
   // const manu = [
   //   {
@@ -98,19 +125,16 @@ const AllProducts = () => {
 
   const increase = id => {
     setCounts(prevCounts => {
-      console.log(prevCounts);
-
       return {
         ...prevCounts,
         [id]: (prevCounts[id] || 0) + 1,
+        
       };
     });
   };
 
   const decrease = id => {
     setCounts(prevCounts => {
-      console.log(prevCounts);
-
       return {...prevCounts, [id]: Math.max((prevCounts[id] || 0) - 1, 0)};
     });
   };
@@ -126,9 +150,31 @@ const AllProducts = () => {
                 <Image style={styles.image} source={{uri: item.image}} />
 
                 <View>
-                  <Text style={styles.text1}>{item.name}</Text>
+                  <View
+                    style={{
+                      justifyContent: 'space-between',
+                      flexDirection: 'row',
+                      alignItems: 'flex-end',
+                    }}>
+                    <View style={{}}>
+                      <Text style={styles.text1}>{item.name}</Text>
 
-                  <Text style={styles.text2}>₹{item.price}</Text>
+                      <Text style={styles.text2}>₹{item.price}</Text>
+                    </View>
+
+                     <TouchableOpacity
+                      onPress={() =>
+                        insertintoaddtocart(
+                          storeUserid,
+                          item.name,
+                          item.price,
+                          item.image,
+                          counts[item.id] || 0,
+                        )
+                      }>
+                      <Icon name="cart-plus" size={30} color="black" />
+                    </TouchableOpacity> 
+                  </View>
 
                   <View style={{flexDirection: 'row'}}>
                     <TouchableOpacity

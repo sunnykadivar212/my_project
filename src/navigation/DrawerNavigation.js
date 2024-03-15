@@ -26,18 +26,28 @@ import SecureStore from '../components/Securestore';
 import PlayVideo from '../components/Video';
 import PlayAudio from '../components/Audio';
 import ToastMessages from '../components/Toastmessages';
-import {TouchableOpacity} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {TouchableOpacity, View} from 'react-native';
+  import Icon from 'react-native-vector-icons/FontAwesome';
 import AddItems from '../database/addItems';
 import AddItemsFromDatabase from '../screen/AddItemsFromDatabase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AddToCart from '../screen/Addtocart';
 
 const Drawer = createDrawerNavigator();
 
 const DrawerNavigation = ({navigation, route}) => {
-  const logout = () => {
-    navigation.navigate('logInPage');
+  const logout = async () => {
+    try {
+      await AsyncStorage.removeItem('id');
+      console.log('AsyncStorage item "id" has been removed.');
+      navigation.navigate('logInPage');
+    } catch (error) {
+      console.error('Error removing AsyncStorage item:', error);
+    }
   };
+  const Addtocart=()=>{
+    navigation.navigate('AddtoCart');
+  }
   // const useId = AsyncStorage.getItem('userid');
 
   return (
@@ -50,9 +60,14 @@ const DrawerNavigation = ({navigation, route}) => {
           title: 'Products',
           headerRight: () => (
             <>
-              <TouchableOpacity onPress={logout} style={{marginRight: 5}}>
+              <View style={{flexDirection:'row'}}>
+              <TouchableOpacity onPress={Addtocart} style={{padding:10}}>
+                <Icon name="shopping-cart" size={30} color="black" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={logout} style={{padding:10}}>
                 <Icon name="sign-out" size={30} color="black" />
               </TouchableOpacity>
+              </View>
             </>
           ),
         }}

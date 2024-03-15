@@ -8,27 +8,27 @@ const Splash_Screen = ({ navigation }) => {
     useEffect(() => {
         createTable();
         const timer = setTimeout(() => {
-            // Token();
+            Token();
             navigation.navigate('WelcomePage');
-        }, 2000);
+        },2000);
         return () => clearTimeout(timer);
     }, [navigation]);
 
-    // const Token = async () => {
-    //     try {
-    //         const token = await AsyncStorage.getItem("userToken");
-    //         console.log(token);
-    //         if (token) {
-    //             navigation.navigate('DrawerNavigation');
-    //         }
-    //         else {
-    //             console.log('welcome page')
-    //             navigation.navigate('WelcomePage');
-    //         }
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }
+    const Token = async () => {
+        try {
+            const token = await AsyncStorage.getItem("userToken");
+            console.log(token);
+            if (token) {
+                navigation.navigate('DrawerNavigation');
+            }
+            else {
+                console.log('welcome page')
+                navigation.navigate('WelcomePage');
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     return (
 

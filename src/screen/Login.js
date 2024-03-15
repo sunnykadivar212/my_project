@@ -23,7 +23,6 @@ const Login = ({navigation}) => {
   const handleLogin = async () => {
     try {
       // const db = await initDB();
-
       db.transaction(tx => {
         tx.executeSql(
           'SELECT id,email,password FROM users WHERE email = ?',
@@ -31,15 +30,13 @@ const Login = ({navigation}) => {
           (tx, results) => {
             if (results.rows.length > 0) {
               const user = results.rows.item(0);
-              console.log(user);
               const userid = user.id;
-              console.log('login page ==>', userid);
+              console.log('login page Userid ==>', userid);
               if (user.password === password) {
                 // Passwords match, authentication successful
-                // AsyncStorage.setItem('userToken', '123');
-                console.log('userid:', userid);
-                navigation.navigate('DrawerNavigation');
                 AsyncStorage.setItem('id', userid.toString());
+                navigation.navigate('DrawerNavigation');
+                AsyncStorage.setItem('userToken', '123');
               } else if (email === '') {
                 // Password doesn't match
                 ToastAndroid.show(
