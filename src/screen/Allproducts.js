@@ -11,24 +11,26 @@ import {
 } from 'react-native';
 import {
   createTable,
+  deleteaddtocart,
   insertData,
-  insertintoaddtocart,
+  insertIntoCartItems,
+  updateaddtocart,
 } from '../database/dbOperations';
 import db from '../database/database';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useAnimatedRef} from 'react-native-reanimated';
 import {useFocusEffect} from '@react-navigation/native';
 
 const AllProducts = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [refresh, setRefresh] = useState();
   const [storeUserid, setStoreUserid] = useState('');
+  const [cartitems, setCartItems] = useState([]);
+  const [selectedProductId, setSelectedProductId] = useState();
 
   useEffect(() => {
-    refreshData();
-    console.log('allproducts ==> ', storeUserid);
-  }, [refresh]);
+    // refreshData();
+    getCartItems();
+  }, [selectedProductId,cartitems,storeUserid]);
 
   const refreshData = () => {
     getUseridFromDB();
@@ -68,7 +70,9 @@ const AllProducts = () => {
 
   useFocusEffect(
     React.useCallback(() => {
+      refreshData();
       getUseridFromDB();
+      // getCartItems();
     }, []),
   );
 
@@ -123,20 +127,141 @@ const AllProducts = () => {
 
   const [counts, setCounts] = useState({});
 
-  const increase = id => {
-    setCounts(prevCounts => {
-      return {
-        ...prevCounts,
-        [id]: (prevCounts[id] || 0) + 1,
-        
-      };
+  const getCartItems = () => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM addtocart WHERE userid=?',
+        [storeUserid],
+        (tx, results) => {
+          var temp = [];
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i));
+          }
+          setCartItems(temp);
+        },
+      );
     });
   };
 
-  const decrease = id => {
+  // const increase = async (id, item) => {
+  //   const updateCounts = (counts[id] || 0) + 1;
+  //   const newCounts = {...counts, [id]: updateCounts};
+  //   setCounts(newCounts);
+  //   console.log('entre increase function');
+  //   const existingCartItemIndex = cartitems.findIndex(
+  //     cartitem => cartitem.productId === item.id,
+  //   );
+  //   console.log('existingCartItemIndex ==> ', existingCartItemIndex);
+  //   if (existingCartItemIndex !== -1) {
+  //     console.log('if condition');
+  //     const updatedCartItems = cartitems.map((cartitem, index) =>
+  //       index === existingCartItemIndex
+  //         ? {...cartitem, quantity: updateCounts}
+  //         : cartitem,
+  //     );
+  //     setCartItems(updatedCartItems);
+  //     await updateaddtocart(updateCounts, storeUserid, item.id);
+  //     setSelectedProductId(item.id);
+  //   } else {
+  //     console.log('insert data ');
+  //     console.log(
+  //       'storeUserid , name , price , image , quantity , productId ==> ',
+  //       storeUserid,
+  //       item.name,
+  //       item.price,
+  //       item.image,
+  //       updateCounts,
+  //       item.id,
+  //     );
+  //     insertIntoCartItems(
+  //       storeUserid,
+  //       item.name,
+  //       item.price,
+  //       item.image,
+  //       updateCounts,
+  //       item.id,
+  //     );
+  //     selectedProductId(item.id);
+  //   }
+  // };
+
+  const increase = async (id, item) => {
+    const updateCounts = (counts[id] || 0) + 1;
+    const newCounts = {...counts, [id]: updateCounts};
+    setCounts(newCounts);
+    console.log('entre increase function');
+    const existingCartItem = cartitems.find(
+      cartitem => cartitem.productId === item.id,
+    );
+    console.log('existingCartItem ==> ', existingCartItem);
+    if (existingCartItem) {
+      console.log('if condition');
+      const updatedCartItems = cartitems.map((cartitem, index) =>
+        index === existingCartItem
+          ? {...cartitem, quantity: updateCounts}
+          : cartitem,
+      );
+      setCartItems(updatedCartItems);
+      await updateaddtocart(updateCounts, storeUserid, item.id);
+      setSelectedProductId(item.id);
+    } else {
+      // console.log('insert data ');
+      // console.log(
+      //   'storeUserid , name , price , image , quantity , productId ==> ',
+      //   storeUserid,
+      //   item.name,
+      //   item.price,
+      //   item.image,
+      //   updateCounts,
+      //   item.id,
+      // );
+      insertIntoCartItems(
+        storeUserid,
+        item.name,
+        item.price,
+        item.image,
+        updateCounts,
+        item.id,
+      );
+      setSelectedProductId(item.id);
+    }
+  };
+
+  const decrease = async (id, item) => {
     setCounts(prevCounts => {
-      return {...prevCounts, [id]: Math.max((prevCounts[id] || 0) - 1, 0)};
+      const updateCounts = Math.max((prevCounts[id] || 0) - 1, 0);
+      const newCounts = {...prevCounts, [id]: updateCounts};
+      return newCounts;
     });
+
+    const existingCartItemIndex = cartitems.findIndex(
+      cartItem => cartItem.productId === item.id,
+    );
+
+    if (existingCartItemIndex !== -1) {
+      const updateCounts = Math.max(
+        cartitems[existingCartItemIndex].quantity - 1,
+        0,
+      );
+      if (updateCounts === 0) {
+        const updatedCartItems = cartitems.filter(
+          cartItem => cartItem.productId !== item.id,
+        );
+        
+        setCartItems(updatedCartItems);
+
+        await deleteaddtocart(storeUserid, item.id);
+        console.log('storeUserid=>',storeUserid);
+      } else {
+        const updatedCartItems = cartitems.map((cartItem, index) =>
+          index === existingCartItemIndex
+            ? {...cartItem, quantity: updateCounts}
+            : cartItem,
+        );
+        setCartItems(updatedCartItems);
+        await updateaddtocart(updateCounts, storeUserid, item.id);
+      }
+    }
   };
 
   return (
@@ -156,31 +281,32 @@ const AllProducts = () => {
                       flexDirection: 'row',
                       alignItems: 'flex-end',
                     }}>
-                    <View style={{}}>
+                    <View>
                       <Text style={styles.text1}>{item.name}</Text>
 
                       <Text style={styles.text2}>₹{item.price}</Text>
                     </View>
 
-                     <TouchableOpacity
-                      onPress={() =>
-                        insertintoaddtocart(
-                          storeUserid,
-                          item.name,
-                          item.price,
-                          item.image,
-                          counts[item.id] || 0,
-                        )
-                      }>
+                    {/* <TouchableOpacity
+                    // onPress={() =>
+                    //   insertintoaddtocart(
+                    //     storeUserid,
+                    //     item.name,
+                    //     item.price,
+                    //     item.image,
+                    //     counts[item.id] || 0,
+                    //   )
+                    // }
+                    >
                       <Icon name="cart-plus" size={30} color="black" />
-                    </TouchableOpacity> 
+                    </TouchableOpacity> */}
                   </View>
 
                   <View style={{flexDirection: 'row'}}>
                     <TouchableOpacity
                       style={styles.botton}
-                      onPress={() => decrease(item.id)}>
-                      <Text style={{color: 'black', fontSize: 20}}>-</Text>
+                      onPress={() => decrease(item.id,item)}>
+                      <Text style={{color: 'black', fontSize: 20,padding:2}}>-</Text>
                     </TouchableOpacity>
 
                     <Text
@@ -196,7 +322,7 @@ const AllProducts = () => {
 
                     <TouchableOpacity
                       style={styles.botton}
-                      onPress={() => increase(item.id)}>
+                      onPress={() => increase(item.id, item)}>
                       <Text style={{color: 'black', fontSize: 20}}>+</Text>
                     </TouchableOpacity>
                   </View>
@@ -215,7 +341,7 @@ const AllProducts = () => {
 
 const styles = StyleSheet.create({
   main: {
-    padding: 10,
+    // padding: 10,
     backgroundColor: 'rgba(168,193,210,1)',
   },
   container: {
@@ -254,7 +380,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginTop: 20,
     padding: 10,
-    borderRadius: 25,
+    borderRadius: 10,
     backgroundColor: 'rgba(236,240,241,1)',
   },
 });

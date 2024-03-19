@@ -69,7 +69,7 @@ const MyProducts = ({navigation, route}) => {
             marginHorizontal: 5,
             flexDirection: 'row',
             margin: 5,
-            backgroundColor: 'rgba(236,240,245,255)',
+            backgroundColor: 'rgba(228, 241, 254, 1)',
             padding: 16,
             borderWidth:1,
             borderColor:'black',

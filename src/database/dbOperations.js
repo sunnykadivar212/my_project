@@ -1,3 +1,4 @@
+import AddToCart from '../screen/Addtocart';
 import db from './database';
 
 export const createTable = () => {
@@ -25,7 +26,7 @@ export const createTable = () => {
       );
 
     tx.executeSql(
-      'CREATE TABLE IF NOT EXISTS addtocart (id INTEGER PRIMARY KEY AUTOINCREMENT, userid INTEGER  , name TEXT NOT NULL , price INTEGER NOT NULL, image TEXT NOT NULL ,quantity INTEGER NOL NULL,FOREIGN KEY(userid) REFERENCES users(id))',
+      'CREATE TABLE IF NOT EXISTS addtocart (id INTEGER PRIMARY KEY AUTOINCREMENT, userid INTEGER  , name TEXT NOT NULL , price INTEGER NOT NULL, image TEXT NOT NULL ,quantity INTEGER NOL NULL, productId INTEGER,FOREIGN KEY(productId) REFERENCES products(id),FOREIGN KEY(userid) REFERENCES users(id))',
       [],
       (tx, results) => {
         console.log('addtocart Table created successfully');
@@ -52,13 +53,22 @@ export const insertProduct = (userid, name, price, image) => {
   });
 };
 
-export const insertintoaddtocart = (userid, name, price, image, quantity) => {
+export const insertIntoCartItems = (
+  userid,
+  name,
+  price,
+  image,
+  quantity,
+  productId,
+) => {
+  console.log(userid, name, price, image, quantity, productId);
   db.transaction(tx => {
     tx.executeSql(
-      'INSERT INTO addtocart(userid,name, price, image,quantity) VALUES(?,?,?,?,?)',
-      [userid, name, price, image, quantity],
+      'INSERT INTO addtocart (userid, name, price, image, quantity, productId) VALUES(?, ?, ?, ?, ?, ?)',
+      [userid, name, price, image, quantity, productId],
+      console.log('userid===>', userid),
       (tx, results) => {
-        console.log('Addtocart Inserted successfully');
+        console.log('addtocart Inserted successfully');
       },
       error => {
         console.log(error);
@@ -66,6 +76,43 @@ export const insertintoaddtocart = (userid, name, price, image, quantity) => {
     );
   });
 };
+
+export const updateaddtocart = async (quantity, userid, productId) => {
+  console.log('Updating addtocart with quantity:', quantity);
+  console.log('User ID:', userid);
+  console.log('Product ID:', productId);
+  try {
+    await db.transaction(tx => {
+      tx.executeSql(
+        'UPDATE addtocart SET quantity=? WHERE userid = ? AND productId=?',
+        [quantity, userid, productId],
+        (tx, results) => {
+          console.log('cart update successfully');
+        },
+      );
+    });
+  } catch (error) {
+    console.log('Update AddToCart=>', error);
+  }
+};
+
+export const deleteaddtocart = async (userid, productId) => {
+  console.log('storeUserid==>', userid);
+  db.transaction(tx => {
+    tx.executeSql(
+      'DELETE FROM addtocart WHERE userid=? AND productId=?',
+      [userid, productId],
+      (tx, results) => {
+        if (results.rowsAffected > 0) {
+          console.log('User data delete Successfully');
+        } else {
+          console.log('Failed to updated users details');
+        }
+      },
+    );
+  });
+};
+
 
 export const updateUser = (name, price, image, id) => {
   db.transaction(tx => {
