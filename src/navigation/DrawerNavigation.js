@@ -32,6 +32,7 @@ import AddItems from '../database/addItems';
 import AddItemsFromDatabase from '../screen/AddItemsFromDatabase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AddToCart from '../screen/Addtocart';
+import Myorders from '../screen/MyOrders';
 
 const Drawer = createDrawerNavigator();
 
@@ -78,6 +79,7 @@ const DrawerNavigation = ({navigation, route}) => {
         component={AddItemsFromDatabase}
         // initialParams={{userid: useId}}
       />
+      <Drawer.Screen name='Myorders' component={Myorders}/>
 
       {/* <Drawer.Screen name="Add Items" component={AddItems} /> */}
       {/* <Drawer.Screen name="Flatlist" component={Flatlist} />

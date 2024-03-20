@@ -105,7 +105,7 @@ const AddItemsFromDatabase = ({navigation, route}) => {
               onChangeText={text => setPrice(text)}></TextInput>
           </View>
 
-          <ImagePickers onImageSelect={handleImageSelect} />
+          <ImagePickers onImageSelect={handleImageSelect} resizeMode={"cover"}/>
 
           <TouchableOpacity onPress={handleSubmit} style={styles.buttonContent}>
             <Text style={styles.buttonText}>Submit</Text>

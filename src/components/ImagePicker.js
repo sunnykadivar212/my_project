@@ -46,10 +46,13 @@ const ImagePickers = ({onImageSelect, itemimage}) => {
                 X
               </Text>
             </TouchableOpacity>
+            <View style={{width:250, height:250}}>
             <Image
+              resizeMode='cover'
               source={{uri: selectedImage}}
-              style={{height: 200, width: 250, resizeMode: 'cover'}}
+              style={{width:250, height:250,resizeMode: 'cover'}}
             />
+            </View>
           </View>
         ) : (
           <View

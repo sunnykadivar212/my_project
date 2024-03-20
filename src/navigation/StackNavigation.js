@@ -14,6 +14,7 @@ import AllProducts from '../screen/Allproducts';
 import AddToCart from '../screen/Addtocart';
 import MyProducts from '../screen/Myproducts';
 import Invoice from '../screen/Invoice';
+import Myorders from '../screen/MyOrders';
 const Stack = createNativeStackNavigator();
 
 const Navigations = () => {
@@ -50,7 +51,8 @@ const Navigations = () => {
         <Stack.Screen name="AllProducts" component={AllProducts} />
         <Stack.Screen name="AddtoCart" component={AddToCart} />
         <Stack.Screen name="MyProducts" component={MyProducts} />
-        <Stack.Screen name="Invoice" component={Invoice}/>
+        <Stack.Screen name="Bill" component={Invoice}/>
+        <Stack.Screen name="MyOrders" component={Myorders}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

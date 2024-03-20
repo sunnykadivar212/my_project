@@ -35,6 +35,30 @@ export const createTable = () => {
         console.log(error);
       },
     );
+
+    // Payment Table
+    tx.executeSql(
+      'CREATE TABLE IF NOT EXISTS payment (id INTEGER PRIMARY KEY AUTOINCREMENT, userid INTEGER , total INTEGER, date TEXT,FOREIGN KEY(userid) REFERENCES users(id))',
+      [],
+      (tx, results) => {
+        console.log('payment Table created successfully');
+      },
+      error => {
+        console.log(error);
+      },
+    );
+
+    //MyOrders Table
+    tx.executeSql(
+      'CREATE TABLE IF NOT EXISTS Myorders (id INTEGER PRIMARY KEY AUTOINCREMENT, userid INTEGER,trangactionId INTEGER NOT NULL, name TEXT NOT NULL, price INTEGER NOT NULL, quantity INTEGER NOT NULL, image TEXT NOT NULL,FOREIGN KEY(userid) REFERENCES users(id))',
+      [],
+      (tx, results) => {
+        console.log('Myorders Table created successfully');
+      },
+      error => {
+        console.log(error);
+      },
+    );
   });
 };
 
@@ -52,6 +76,25 @@ export const insertProduct = (userid, name, price, image) => {
     );
   });
 };
+
+export const insertPaymentDetail=(userid, total ,date)=>{
+try {
+  db.transaction(tx => {
+    tx.executeSql(
+      'INSERT INTO payment (userid, total, date) VALUES(?, ?, ?)',
+      [userid, total ,date],
+      (tx, results) => {
+        console.log('paymentDetails Inserted successfully');
+      },
+      error => {
+        console.log(error);
+      },
+    );
+  });
+} catch (error) {
+  console.log(error)
+}
+}
 
 export const insertIntoCartItems = (
   userid,
@@ -112,7 +155,6 @@ export const deleteaddtocart = async (userid, productId) => {
     );
   });
 };
-
 
 export const updateUser = (name, price, image, id) => {
   db.transaction(tx => {

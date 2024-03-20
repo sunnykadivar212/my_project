@@ -3,11 +3,9 @@ import {
   View,
   Text,
   FlatList,
-  StyleSheet,
   RefreshControl,
   Image,
   TouchableOpacity,
-  ScrollView,
 } from 'react-native';
 import db from '../database/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -152,7 +150,7 @@ const AddToCart = ({navigation}) => {
     <View>
       <View>
         <TouchableOpacity
-          onPress={()=>navigation.navigate("Invoice")}
+          onPress={()=>navigation.navigate("Bill")}
           style={{
             backgroundColor: 'rgba(168,193,210,1)',
             alignItems: 'center',
@@ -161,7 +159,7 @@ const AddToCart = ({navigation}) => {
             borderRadius: 20,
           }}>
           <Text style={{color: 'black', fontSize: 20, fontWeight: '700'}}>
-            CheckOut
+            Payment
           </Text>
         </TouchableOpacity>
       </View>

@@ -1,58 +1,31 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, RefreshControl, FlatList} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import db from '../database/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {insertPaymentDetail} from '../database/dbOperations';
 
-const Invoice = item => {
+const Invoice = ({item, navigation}) => {
   const invoiceData = {
     invoiceNumber: '1',
     customerName: 'Sunny kadivar',
-    customerEmail: 'Sunnykadivar98@gmail.com',
     customerAddress: 'Morbi',
   };
 
-  const [allProducts, setAllProducts] = useState([]);
-  const [refresh, setRefresh] = useState();
   const [storeUserid, setStoreUserid] = useState('');
   const [cartitems, setCartItems] = useState([]);
-  const [selectedProductId, setSelectedProductId] = useState();
-  const [email , setEmail]=useState([]);
+  const [email, setEmail] = useState([]);
 
   useEffect(() => {
-    // refreshData();
     getCartItems();
     Email();
-  }, [selectedProductId, cartitems, storeUserid,email]);
-
-  const refreshData = () => {
-    getUseridFromDB();
-    try {
-      db.transaction(tx => {
-        tx.executeSql(
-          'SELECT * FROM addtocart WHERE userId=?',
-          [storeUserid],
-          (tx, results) => {
-            var temp = [];
-            for (let i = 0; i < results.rows.length; ++i) {
-              temp.push(results.rows.item(i));
-              setAllProducts(temp);
-            }
-          },
-        );
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const onRefresh = () => {
-    setRefresh(true);
-    refreshData();
-    setTimeout(() => {
-      setRefresh(false);
-    }, 1000);
-  };
+  }, [cartitems, storeUserid, email]);
 
   const getUseridFromDB = async () => {
     try {
@@ -67,13 +40,13 @@ const Invoice = item => {
 
   useFocusEffect(
     React.useCallback(() => {
-      refreshData();
       getUseridFromDB();
       // getCartItems();
     }, []),
   );
 
   const getCartItems = () => {
+    getUseridFromDB();
     db.transaction(tx => {
       tx.executeSql(
         'SELECT * FROM addtocart WHERE userid=?',
@@ -157,7 +130,7 @@ const Invoice = item => {
         <Text style={styles.subtitle}>Invoice Items</Text>
 
         <FlatList
-          data={allProducts}
+          data={cartitems}
           renderItem={({item}) => (
             <View style={styles.item} key={item.id}>
               <Text style={styles.itemName}>{item.name}</Text>
@@ -170,14 +143,27 @@ const Invoice = item => {
             </View>
           )}
           keyExtractor={(item, index) => index.toString()}
-          refreshControl={
-            <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
-          }></FlatList>
+        />
       </View>
       <View style={styles.divider} />
       <View style={styles.totalContainer}>
-        <Text style={styles.label}>Total:</Text>
+        <Text style={styles.totallabel}>Total:</Text>
         <Text style={styles.total}>${total}</Text>
+      </View>
+      <View>
+        <TouchableOpacity
+          onPress={() => insertPaymentDetail(storeUserid, formatDate, total)}
+          style={{
+            backgroundColor: 'rgba(168,193,210,1)',
+            alignItems: 'center',
+            marginTop: 20,
+            padding: 10,
+            borderRadius: 20,
+          }}>
+          <Text style={{color: 'black', fontSize: 20, fontWeight: '700'}}>
+            CheckOut
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -206,6 +192,11 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: 'bold',
     color: 'black',
+  },
+  totallabel: {
+    fontWeight: 'bold',
+    color: 'black',
+    fontSize:20
   },
   text: {
     marginLeft: 5,
