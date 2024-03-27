@@ -1,15 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import db from '../database/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {insertPaymentDetail} from '../database/dbOperations';
+import {insertIntoMyorders, insertPaymentDetail} from '../database/dbOperations';
 
 const Invoice = ({item, navigation}) => {
   const invoiceData = {
@@ -40,8 +34,8 @@ const Invoice = ({item, navigation}) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      getUseridFromDB();
-      // getCartItems();
+    getUseridFromDB();
+    // getCartItems();
     }, []),
   );
 
@@ -83,8 +77,8 @@ const Invoice = ({item, navigation}) => {
           var temp = [];
           for (let i = 0; i < results.rows.length; ++i) {
             temp.push(results.rows.item(i));
+            setEmail(temp);
           }
-          setEmail(temp);
         },
       );
     });
@@ -129,40 +123,44 @@ const Invoice = ({item, navigation}) => {
       <View style={styles.itemsContainer}>
         <Text style={styles.subtitle}>Invoice Items</Text>
 
-        <FlatList
-          data={cartitems}
-          renderItem={({item}) => (
-            <View style={styles.item} key={item.id}>
+        {cartitems.map((item, index) => (
+          
+            <View style={styles.item} key={index}>
               <Text style={styles.itemName}>{item.name}</Text>
+
               <Text style={styles.itemDetails}>
                 {item.quantity} x ${item.price}
               </Text>
+
               <Text style={styles.itemTotal}>
                 ${item.quantity * item.price}
               </Text>
             </View>
-          )}
-          keyExtractor={(item, index) => index.toString()}
-        />
+          
+        ))}
       </View>
       <View style={styles.divider} />
       <View style={styles.totalContainer}>
-        <Text style={styles.totallabel}>Total:</Text>
-        <Text style={styles.total}>${total}</Text>
+        <Text style={styles.totallabel}>Total :</Text>
+        <Text style={styles.total}> ${total}</Text>
       </View>
       <View>
         <TouchableOpacity
-          onPress={() => insertPaymentDetail(storeUserid, formatDate, total)}
-          style={{
-            backgroundColor: 'rgba(168,193,210,1)',
-            alignItems: 'center',
-            marginTop: 20,
-            padding: 10,
-            borderRadius: 20,
-          }}>
-          <Text style={{color: 'black', fontSize: 20, fontWeight: '700'}}>
-            CheckOut
-          </Text>
+          onPress={() => {
+            cartitems.forEach(item =>{
+             insertIntoMyorders(
+              storeUserid,
+              item.name,
+              item.price,
+              item.image,
+              item.quantity,
+              formatDate
+             )
+            })
+            navigation.navigate("Myorders");
+          }}
+          style={styles.button}>
+          <Text style={styles.buttontext}>Payment</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -196,7 +194,7 @@ const styles = StyleSheet.create({
   totallabel: {
     fontWeight: 'bold',
     color: 'black',
-    fontSize:20
+    fontSize: 20,
   },
   text: {
     marginLeft: 5,
@@ -245,9 +243,21 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   total: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: 'black',
+  },
+  button: {
+    backgroundColor: 'rgba(168,193,210,1)',
+    alignItems: 'center',
+    marginTop: 20,
+    padding: 10,
+    borderRadius: 20,
+  },
+  buttontext: {
+    color: 'black',
+    fontSize: 20,
+    fontWeight: '700',
   },
 });
 

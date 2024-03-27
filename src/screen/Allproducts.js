@@ -30,7 +30,7 @@ const AllProducts = () => {
   useEffect(() => {
     // refreshData();
     getCartItems();
-  }, [selectedProductId,cartitems,storeUserid]);
+  }, [selectedProductId, cartitems, storeUserid]);
 
   const refreshData = () => {
     getUseridFromDB();
@@ -51,10 +51,9 @@ const AllProducts = () => {
 
   const onRefresh = () => {
     setRefresh(true);
-    refreshData();
     setTimeout(() => {
       setRefresh(false);
-    }, 1000);
+    });
   };
 
   const getUseridFromDB = async () => {
@@ -247,11 +246,11 @@ const AllProducts = () => {
         const updatedCartItems = cartitems.filter(
           cartItem => cartItem.productId !== item.id,
         );
-        
+
         setCartItems(updatedCartItems);
 
         await deleteaddtocart(storeUserid, item.id);
-        console.log('storeUserid=>',storeUserid);
+        console.log('storeUserid=>', storeUserid);
       } else {
         const updatedCartItems = cartitems.map((cartItem, index) =>
           index === existingCartItemIndex
@@ -272,8 +271,8 @@ const AllProducts = () => {
           <>
             <View style={styles.container}>
               <View style={styles.childView}>
+                
                 <Image style={styles.image} source={{uri: item.image}} />
-
                 <View>
                   <View
                     style={{
@@ -286,27 +285,15 @@ const AllProducts = () => {
 
                       <Text style={styles.text2}>₹{item.price}</Text>
                     </View>
-
-                    {/* <TouchableOpacity
-                    // onPress={() =>
-                    //   insertintoaddtocart(
-                    //     storeUserid,
-                    //     item.name,
-                    //     item.price,
-                    //     item.image,
-                    //     counts[item.id] || 0,
-                    //   )
-                    // }
-                    >
-                      <Icon name="cart-plus" size={30} color="black" />
-                    </TouchableOpacity> */}
                   </View>
 
                   <View style={{flexDirection: 'row'}}>
                     <TouchableOpacity
                       style={styles.botton}
-                      onPress={() => decrease(item.id,item)}>
-                      <Text style={{color: 'black', fontSize: 20,padding:2}}>-</Text>
+                      onPress={() => decrease(item.id, item)}>
+                      <Text style={{color: 'black', fontSize: 20, padding: 2}}>
+                        -
+                      </Text>
                     </TouchableOpacity>
 
                     <Text

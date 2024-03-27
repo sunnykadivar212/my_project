@@ -11,11 +11,11 @@ import db from '../database/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Invoice from './Invoice';
+import {insertIntoMyorders, insertPaymentDetail} from '../database/dbOperations';
 
 const AddToCart = ({navigation}) => {
   const [menuList, setMenuList] = useState([]);
   const [refresh, setRefresh] = useState();
-  //   const {userid} = route.params;
   const [storeUserid, setStoreUserid] = useState('');
 
   const refreshData = () => {
@@ -44,7 +44,7 @@ const AddToCart = ({navigation}) => {
     refreshData();
     setTimeout(() => {
       setRefresh(false);
-    }, 2000);
+    }, 1000);
   };
 
   useEffect(() => {
@@ -71,37 +71,38 @@ const AddToCart = ({navigation}) => {
     });
   };
 
-  const total = () => {
-    let total = 0;
-    menuList.forEach(item => {
-      total += item.price * item.quantity;
-    });
-    console.log('Total==>', total);
-  };
-  
+  let total = 0;
+  menuList.forEach(item => {
+    total += item.price * item.quantity;
+  });
+  // console.log('Total==>', total);
 
-  let listitem = (item) => {
+  const currentDate = new Date();
+  const day = currentDate.getDate();
+  const month = currentDate.getMonth() + 1;
+  const year = currentDate.getFullYear();
+
+  const formatDate = `${day}/${month}/${year}`;
+
+  let listitem = item => {
     return (
       <View
         style={{
           alignItems: 'center',
-          marginHorizontal: 5,
           flexDirection: 'row',
-          margin: 5,
+          margin: 10,
           backgroundColor: 'rgba(230,240,245,255)',
-          padding: 16,
+          padding: 10,
           borderWidth: 1,
           borderColor: 'black',
           borderRadius: 10,
-          marginLeft: 10,
-          marginRight: 10,
         }}>
         {item.image && (
           <Image
             source={{uri: item.image}}
             style={{
-              height: 100,
-              width: 100,
+              height: 120,
+              width: 120,
               resizeMode: 'cover',
               margin: 10,
               borderRadius: 20,
@@ -119,15 +120,23 @@ const AddToCart = ({navigation}) => {
             }}>
             Name : {item.name}
           </Text>
-          <Text
-            style={{
-              color: 'black',
-              fontSize: 20,
-              marginLeft: 10,
-              padding: 5,
-            }}>
-            Price : {item.price}
-          </Text>
+          <View style={{flexDirection: 'row'}}>
+            <Text
+              style={{
+                color: 'black',
+                fontSize: 20,
+                marginLeft: 10,
+                padding: 5,
+              }}>
+              Price : {item.price}
+            </Text>
+            <View style={{paddingLeft: 20, paddingTop: 8}}>
+              <TouchableOpacity onPress={() => deleteUser(item.id)}>
+                <Icon name="delete-outline" size={30} color="black" />
+              </TouchableOpacity>
+            </View>
+          </View>
+
           <Text
             style={{
               color: 'black',
@@ -138,11 +147,6 @@ const AddToCart = ({navigation}) => {
             Quantity : {item.quantity}
           </Text>
         </View>
-        <View style={{padding: 20}}>
-          <TouchableOpacity onPress={() => deleteUser(item.id)}>
-            <Icon name="delete-outline" size={30} color="black" />
-          </TouchableOpacity>
-        </View>
       </View>
     );
   };
@@ -150,7 +154,10 @@ const AddToCart = ({navigation}) => {
     <View>
       <View>
         <TouchableOpacity
-          onPress={()=>navigation.navigate("Bill")}
+          onPress={(item) => {
+            insertPaymentDetail(storeUserid, formatDate, total),
+            navigation.navigate('Bill');
+           }}
           style={{
             backgroundColor: 'rgba(168,193,210,1)',
             alignItems: 'center',
@@ -159,7 +166,7 @@ const AddToCart = ({navigation}) => {
             borderRadius: 20,
           }}>
           <Text style={{color: 'black', fontSize: 20, fontWeight: '700'}}>
-            Payment
+            Checkout
           </Text>
         </TouchableOpacity>
       </View>

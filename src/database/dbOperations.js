@@ -48,9 +48,9 @@ export const createTable = () => {
       },
     );
 
-    //MyOrders Table
+    // MyOrders Table
     tx.executeSql(
-      'CREATE TABLE IF NOT EXISTS Myorders (id INTEGER PRIMARY KEY AUTOINCREMENT, userid INTEGER,trangactionId INTEGER NOT NULL, name TEXT NOT NULL, price INTEGER NOT NULL, quantity INTEGER NOT NULL, image TEXT NOT NULL,FOREIGN KEY(userid) REFERENCES users(id))',
+      'CREATE TABLE IF NOT EXISTS Myorders (id INTEGER PRIMARY KEY AUTOINCREMENT, userid INTEGER , name TEXT, price INTEGER , quantity INTEGER, image TEXT,date TEXT, FOREIGN KEY(userid) REFERENCES users(id))',
       [],
       (tx, results) => {
         console.log('Myorders Table created successfully');
@@ -77,24 +77,24 @@ export const insertProduct = (userid, name, price, image) => {
   });
 };
 
-export const insertPaymentDetail=(userid, total ,date)=>{
-try {
-  db.transaction(tx => {
-    tx.executeSql(
-      'INSERT INTO payment (userid, total, date) VALUES(?, ?, ?)',
-      [userid, total ,date],
-      (tx, results) => {
-        console.log('paymentDetails Inserted successfully');
-      },
-      error => {
-        console.log(error);
-      },
-    );
-  });
-} catch (error) {
-  console.log(error)
-}
-}
+export const insertPaymentDetail = (userid, total, date) => {
+  try {
+    db.transaction(tx => {
+      tx.executeSql(
+        'INSERT INTO payment (userid, total, date) VALUES(?, ?, ?)',
+        [userid, total, date],
+        (tx, results) => {
+          console.log('paymentDetails Inserted successfully');
+        },
+        error => {
+          console.log(error);
+        },
+      );
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export const insertIntoCartItems = (
   userid,
@@ -112,6 +112,29 @@ export const insertIntoCartItems = (
       console.log('userid===>', userid),
       (tx, results) => {
         console.log('addtocart Inserted successfully');
+      },
+      error => {
+        console.log(error);
+      },
+    );
+  });
+};
+
+export const insertIntoMyorders = (
+  userid,
+  name,
+  price,
+  image,
+  quantity,
+  date,
+) => {
+  db.transaction(tx => {
+    tx.executeSql(
+      'INSERT INTO Myorders (userid, name, price, image, quantity, date) VALUES(?, ?, ?, ?, ?, ?)',
+      [userid, name, price, image, quantity, date],
+      console.log('userid===>', userid),
+      (tx, results) => {
+        console.log('MyOrder data Inserted successfully');
       },
       error => {
         console.log(error);
@@ -171,3 +194,23 @@ export const updateUser = (name, price, image, id) => {
     );
   });
 };
+
+
+// export const Droptable = ()=>{
+//   db.transaction(tx=>{
+//     tx.executeSql(
+//       'DROP TABLE IF EXISTS Myorders',
+//       [],
+//       (tx, results) => {
+//         console.log('Myorders Table created successfully');
+//       },
+//       error => {
+//         console.log(error);
+//       }
+//     )
+//   })
+// }
+
+
+
+

@@ -47,7 +47,7 @@ const MyProducts = ({navigation, route}) => {
 
   useEffect(() => {
     refreshData();
-  }, [storeUserid, menuList,refresh]);
+  }, [storeUserid, menuList, refresh]);
 
   const getUseridFromDB = async () => {
     try {
@@ -66,23 +66,22 @@ const MyProducts = ({navigation, route}) => {
         <View
           style={{
             alignItems: 'center',
-            marginHorizontal: 5,
             flexDirection: 'row',
-            margin: 5,
-            backgroundColor: 'rgba(228, 241, 254, 1)',
-            padding: 16,
-            borderWidth:1,
-            borderColor:'black',
-            borderRadius:10, 
+            margin: 10,
+            backgroundColor: 'rgba(230,240,245,255)',
+            padding: 10,
+            borderWidth: 1,
+            borderColor: 'black',
+            borderRadius: 10,
           }}>
           {item.image && (
             <Image
               source={{uri: item.image}}
               style={{
-                height: 100,
-                width: 100,
+                height: 140,
+                width: 140,
                 resizeMode: 'cover',
-                margin: 10,
+                margin: 5,
                 borderRadius: 20,
               }}
             />
@@ -101,7 +100,7 @@ const MyProducts = ({navigation, route}) => {
             <Text
               style={{
                 color: 'black',
-                fontSize: 20,
+                fontSize:20,
                 marginLeft: 10,
                 padding: 5,
               }}>
